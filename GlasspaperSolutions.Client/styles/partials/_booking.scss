@@ -1,0 +1,52 @@
+@use './colors' as c;
+
+.hidden { 
+    opacity: 0;
+}
+
+.booking_form {
+    text-align: left;
+}
+
+#bookingFlex { 
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    text-align: left;
+    
+
+    article {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        margin: 1.5em;
+        padding: 0em 2em 2em 2em;
+        // border: 1px solid red;
+        max-width: 25em;
+
+
+        #bookingArticle {
+            height: 15em;
+            align-items: flex-end;
+        }
+    }
+}
+
+.btnBooking {
+    background-color: #4CAF50; /* Green */
+    border: none;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+#btnCancelBooking {
+    background-color: red; /* Green */
+    margin: 0em;
+}
