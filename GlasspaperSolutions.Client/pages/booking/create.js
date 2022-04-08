@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 
 import axios from 'axios'
 import { useRouter } from 'next/router'
@@ -9,6 +9,7 @@ import { HOST } from '@/lib/constants/constants'
 
 export default function CreateBookingForm() {
   const [isOpen, setIsOpen] = useState(false)
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
 
   const router = useRouter()
   const [form, setForm] = useState({
@@ -33,6 +34,12 @@ export default function CreateBookingForm() {
     })
     router.push('/')
   }
+
+  useEffect(() => {
+    if (form.name !== '' && form.owner !== '' && form.type !== '')
+      setIsButtonDisabled(false)
+    else setIsButtonDisabled(true)
+  }, [form])
 
   return (
     <>
@@ -83,7 +90,12 @@ export default function CreateBookingForm() {
           </ul>
         </div>
         <div>
-          <button id="createBooking" type="submit">
+          <button
+            disabled={isButtonDisabled}
+            className={isButtonDisabled ? 'btnDisabled' : 'btnEnabled'}
+            id="createBooking"
+            type="submit"
+          >
             Create Booking
           </button>
         </div>
