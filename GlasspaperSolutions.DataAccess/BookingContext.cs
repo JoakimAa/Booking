@@ -42,7 +42,7 @@ namespace GlasspaperSolutions.DataAccess
                 entity.HasOne(d => d.Booking)
                     .WithMany(p => p.Resources)
                     .HasForeignKey(d => d.BookingId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .OnDelete(DeleteBehavior.Cascade)
                     .HasConstraintName("FK_BookingResource_Booking");
 
                 entity.HasOne(d => d.Resource)
