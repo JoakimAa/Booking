@@ -1,10 +1,11 @@
 {
   "root": true,
   "extends": [
+    "airbnb-base",
     "next",
     "next/core-web-vitals",
-    "plugin:prettier/recommended",
-    "next/babel"
+    "plugin:prettier/recommended"
+    //"next/babel"
   ],
   "plugins": ["testing-library", "prettier"],
   "env": {
@@ -29,6 +30,12 @@
     }
   ],
   "rules": {
+    "prettier/prettier": [
+      "error",
+      {
+        "endOfLine": "auto"
+      }
+    ],
     "indent": 0,
     "quotes": ["error", "single"],
     "semi": ["error", "never"],
@@ -52,8 +59,8 @@
     "object-curly-spacing": ["error", "always"],
     "one-var": ["error", "never"],
     "quote-props": 0,
-    "no-ternary": 1,
-    "sort-imports": "warn",
+    "no-ternary": 0,
+    "sort-imports": "off",
     "react/prop-types": 0,
     "react/jsx-indent": [2, 2],
     "react/jsx-indent-props": [2, 2],
@@ -87,7 +94,7 @@
         }
       }
     ],
-    "no-console": 1,
+    "no-console": 0,
     "space-before-function-paren": [
       "error",
       {

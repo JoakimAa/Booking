@@ -23,33 +23,42 @@
   }
 }
 
+#btnAddResource {
+  background-color: rgb(179, 179, 0); /* Green */
+  border: none;
+  color: white;
+  padding: 8px 18px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  position: relative;
+  top: 20em;
+  left: -0.7em;
 
-/* 
-  h3 {
-    text-align: center;
-  }
-   */
+}
 
-  .left-section {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
+.left-section {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
 
-    input {
-      margin: 0.2em 1em 0 0;
-    }
+  input {
+    margin: 0.2em 1em 0 0;
   }
+}
 
-  .resource-list {
-    width: 30%;
-    margin: 0 auto;
-  }
-  
-  .resources-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .resource-list li {
-    margin-bottom: 0.5rem;
-  }
+.resource-list {
+  width: 30%;
+  margin: 0 auto;
+}
+
+.resources-list {
+  list-style: none;
+  padding: 0;
+  margin: 4em 0 0 0;
+}
+
+.resource-list li {
+  margin-bottom: 0.5rem;
+}

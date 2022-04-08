@@ -21,6 +21,7 @@
     "react-hook-form": "^7.29.0",
     "react-modal": "^3.14.4",
     "react-select": "^5.2.2",
+    "react-loading-skeleton": "^3.0.1",
     "serverless-mysql": "^1.5.4"
   },
   "devDependencies": {
@@ -29,8 +30,8 @@
     "eslint-config-airbnb-base": "^14.2.1",
     "eslint-config-next": "12.1.4",
     "eslint-config-prettier": "^8.3.0",
-    "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-prettier": "^4.0.0",
+    "eslint-import-resolver-alias": "^1.1.2",
     "eslint-plugin-testing-library": "5.0.0",
     "faker": "^5.5.3",
     "node-sass": "^7.0.1",

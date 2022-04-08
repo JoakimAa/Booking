@@ -1,135 +1,94 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
+
 import axios from 'axios'
-import { HOST } from '@/lib/constants/constants'
 import { useRouter } from 'next/router'
-import useGetResources from '@/hooks/useGetResources'
 
-export default function BookingForm() {
-    const [ dropDownResources ] = useGetResources()
-    const [ checkedState, setCheckedState ] = useState([""]);
+import ResourceModal from '@/components/ResourceModal'
+import SelectResources from '@/components/SelectResources'
+import { HOST } from '@/lib/constants/constants'
 
-    const router = useRouter();
-    const [form, setForm] = useState({
-        name: '',
-        type: '',
-        owner: '',
-        resources: [],
-      })
+export default function CreateBookingForm() {
+  const [isOpen, setIsOpen] = useState(false)
 
-    const handleOnChange = (position) => {
-        console.log("checkedState", checkedState)
-        
-        console.log("position", position)
-        const updatedCheckedState = checkedState.map((item, index) =>
-            index === position ? !item : item
-        );
+  const router = useRouter()
+  const [form, setForm] = useState({
+    name: '',
+    type: '',
+    owner: '',
+    resources: [],
+  })
 
-        console.log("updatedCheckedState",updatedCheckedState)
-        
-        setCheckedState(updatedCheckedState);
+  const openModal = () => {
+    setIsOpen(true)
+  }
 
-        const resources = updatedCheckedState.reduce(
-            (accumulator, currentState, index) => {
-                console.log("############")
-                console.log("accumulator",accumulator)
-                console.log("currentState",currentState)
-                console.log("index",index)
-                console.log("############")
-                if (currentState === true) {
-                    console.log("dropdown", dropDownResources[index])
-                    console.log("resources", resources)
-                    return [...accumulator, dropDownResources[index]]
-                }
-                return accumulator
-            },
-            []
-        )
+  const handleInputOnChange = ({ currentTarget: { name, value } }) => {
+    setForm((state) => ({ ...state, [name]: value }))
+  }
 
-        setForm((state) => ({...state, resources}))
-        console.log('form', form)
-    };
+  const handleSubmit = async (event) => {
+    event.preventDefault()
+    await axios.post(`${HOST.API_URL}/api/bookings`, form).catch((err) => {
+      console.log(err.message)
+    })
+    router.push('/')
+  }
 
-
-    useEffect(() => {
-        setCheckedState(new Array(dropDownResources?.length).fill(false))
-    }, [dropDownResources])
-
-
-    const handleInputOnChange = ({ currentTarget: { name, value } }) => {
-        setForm((state) => ({ ...state, [name]: value }))
-    }
-    
-    const handleSubmit = async (event) => {
-        event.preventDefault()
-          await axios
-            .post(`${HOST.API_URL}/api/bookings`, form)
-            .catch((err) => {
-              console.log(err.message)
-            })
-            router.push(`/`);
-        }
-    
-    return (
-        <form className="booking_form" onSubmit={handleSubmit}>
+  return (
+    <>
+      <div>
+        <button id="btnAddResource" type="button" onClick={openModal}>
+          Add new Resource
+        </button>
+      </div>
+      <form className="booking_form" onSubmit={handleSubmit}>
         <h2>New Booking</h2>
         <div>
-            <label htmlFor="name">Name</label>
-            <input
+          <label htmlFor="name">Name</label>
+          <input
             type="text"
             id="name"
             name="name"
             onChange={handleInputOnChange}
             value={form.name}
             required={true}
-            />
+          />
         </div>
         <div>
-            <label htmlFor="type">Type</label>
-            <input
+          <label htmlFor="type">Type</label>
+          <input
             type="text"
             id="type"
             name="type"
             required={true}
             onChange={handleInputOnChange}
             value={form.type}
-            />
+          />
         </div>
         <div>
-            <label htmlFor="owner">Owner</label>
-            <input
+          <label htmlFor="owner">Owner</label>
+          <input
             type="text"
             id="owner"
             name="owner"
             required={true}
             onChange={handleInputOnChange}
             value={form.owner}
-            />
+          />
         </div>
         <div>
-            <h3>Select Resources</h3>
-            <ul className="resources-list">
-                {dropDownResources?.map(({ name }, index) => (
-                    <li key={index}>
-                    <div className="resources-list-item">
-                        <div className="left-section">
-                        <input
-                            type="checkbox"
-                            id={`custom-checkbox-${index}`}
-                            name={name}
-                            value={name}
-                            checked={checkedState[index]}
-                            onChange={() => handleOnChange(index)}
-                        />
-                        <label htmlFor={`custom-checkbox-${index}`}>{name}</label>
-                        </div>
-                    </div>
-                    </li>
-                ))}
-            </ul>
+          <h3>Select Resources</h3>
+          <ul className="resources-list">
+            <SelectResources setForm={setForm} />
+          </ul>
         </div>
-        <button id="sendIssue" type="submit">
+        <div>
+          <button id="createBooking" type="submit">
             Create Booking
-        </button>
-        </form>
-    )
+          </button>
+        </div>
+      </form>
+      <ResourceModal isOpen={isOpen} setIsOpen={setIsOpen} />
+    </>
+  )
 }
