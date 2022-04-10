@@ -73,7 +73,7 @@ namespace GlasspaperSolutions.Api.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(booking);
         }
 
         // POST: api/Bookings
@@ -100,7 +100,7 @@ namespace GlasspaperSolutions.Api.Controllers
             _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(booking);
         }
 
         private bool BookingExists(int id)

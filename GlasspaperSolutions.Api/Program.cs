@@ -1,9 +1,10 @@
+using GlasspaperSolutions.Api.Middleware;
 using GlasspaperSolutions.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
-string MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
+var MyAllowSpecificOrigins = "_myAllowSpecificOrigins";
 
 // Add services to the container.
 
@@ -12,7 +13,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var connection = @"Server=(localdb)\MSSQLLocalDB;Database=GlasspaperBooking;Trusted_Connection=True;ConnectRetryCount=0";
+var connection = builder.Configuration.GetSection("ConnectionStrings:LocalDbConnectionString").Value;
 builder.Services.AddDbContext<BookingContext>(options => options.UseSqlServer(connection));
 builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 
@@ -36,6 +37,8 @@ app.UseCors(MyAllowSpecificOrigins);
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
+app.UseMiddleware<ApiKeyMiddleware>();
 
 app.MapControllers();
 
