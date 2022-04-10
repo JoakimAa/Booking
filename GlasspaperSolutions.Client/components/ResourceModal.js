@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 import Modal from 'react-modal'
 
 import CreateAxiosRequest from '@/lib/utils/createAxiosRequest'
+import createDialog from '@/lib/utils/createDialog'
 
 Modal.setAppElement('#grid')
 
@@ -27,13 +28,28 @@ export default function ResourceModal({ isOpen, setIsOpen }) {
       method: 'POST',
       url: '/resources',
       data: resourceForm,
-    }).catch((err) => {
-      console.log(err.message)
     })
+      .then((response) => {
+        // If the response is true we will send a success message to the user
+        console.log('response', response)
 
-    console.log('form', resourceForm)
-    setIsOpen(false)
-    router.push('/booking/create')
+        if (response?.status === 201) {
+          createDialog(
+            'Success!',
+            'Your resource has been added!',
+            'success',
+            3000
+          )
+        }
+
+        setTimeout(() => {
+          router.push('/booking/create')
+          setIsOpen(false)
+        }, 3000)
+      })
+      .catch((err) => {
+        createDialog('Oops!', err, 'error', 3000)
+      })
   }
 
   return (

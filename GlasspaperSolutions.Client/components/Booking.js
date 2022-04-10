@@ -1,15 +1,18 @@
 import { useState } from 'react'
 
+/* import SkeletonCard from './SkeletonCard' */
 import BookingModal from '@/components/BookingModal'
 import Resource from '@/components/Resource'
 import useGetBookingById from '@/hooks/useGetBookingById'
 import createAxiosRequest from '@/lib/utils/createAxiosRequest'
+import createDialog from '@/lib/utils/createDialog'
 import formatDate from '@/lib/utils/formatData'
 
 export default function Booking({ booking, setIsBookingDeleted }) {
   const [toggleBookingModal, setToggleBookingModal] = useState(false)
   const [toggleEditModal, setToggleEditModal] = useState(false)
   const [isBookingUpdated, setIsBookingUpdated] = useState(false)
+
   const [updatedBooking, loading, error] = useGetBookingById(
     booking,
     isBookingUpdated,
@@ -31,28 +34,56 @@ export default function Booking({ booking, setIsBookingDeleted }) {
       method: 'PUT',
       url: `/bookings/${booking?.bookingId}`,
       data: form,
-    }).catch((err) => {
-      console.log(err.message)
     })
+      .then((response) => {
+        // If the response is true we will send a success message to the user
+        console.log('response', response)
 
-    setIsBookingUpdated(true)
+        if (response?.status === 200) {
+          createDialog(
+            'Success!',
+            'Your booking have been canceled!',
+            'success',
+            3000
+          )
+        }
+
+        setTimeout(() => setIsBookingDeleted(true), 2000)
+      })
+      .catch((err) => {
+        createDialog('Oops!', err, 'error', 3000)
+      })
   }
 
   const deleteBooking = async () => {
     await createAxiosRequest({
       method: 'DELETE',
       url: `/bookings/${booking?.bookingId}`,
-    }).catch((err) => {
-      console.log(err.message)
     })
+      .then((response) => {
+        // If the response is true we will send a success message to the user
+        console.log('response', response)
 
-    setIsBookingDeleted(true)
+        if (response?.status === 200) {
+          createDialog(
+            'Success!',
+            'Your booking have been deleted!',
+            'success',
+            3000
+          )
+        }
+
+        setTimeout(() => setIsBookingDeleted(true), 2000)
+      })
+      .catch((err) => {
+        console.log(err.message)
+      })
   }
 
   return (
     <>
       <article>
-        <p>{error}</p>
+        {error && <p>{error}</p>}
         {!loading && (
           <>
             <div>

@@ -7,6 +7,7 @@ import DateTime from 'react-datetime'
 import Modal from 'react-modal'
 
 import CreateAxiosRequest from '@/lib/utils/createAxiosRequest'
+import createDialog from '@/lib/utils/createDialog'
 
 Modal.setAppElement('#grid')
 
@@ -56,13 +57,30 @@ export default function BookModal({
       method: 'PUT',
       url: `/bookings/${booking?.bookingId}`,
       data: form,
-    }).catch((err) => {
-      console.log(err.message)
     })
+      .then((response) => {
+        // If the response is true we will send a success message to the user
+        console.log('response', response)
+
+        if (response?.status === 200) {
+          createDialog(
+            'Success!',
+            'Your booking have been changed!',
+            'success',
+            3000
+          )
+        }
+
+        setTimeout(() => {
+          setIsBookingUpdated(true)
+          setIsOpen(false)
+        }, 3000)
+      })
+      .catch((err) => {
+        createDialog('Oops!', err, 'error', 3000)
+      })
 
     console.log('form', form)
-    setIsOpen(false)
-    setIsBookingUpdated(true)
   }
 
   return (

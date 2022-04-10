@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import ResourceModal from '@/components/ResourceModal'
 import SelectResources from '@/components/SelectResources'
 import createAxiosRequest from '@/lib/utils/createAxiosRequest'
+import createDialog from '@/lib/utils/createDialog'
 
 export default function CreateBookingForm() {
   const [isOpen, setIsOpen] = useState(false)
@@ -31,13 +32,27 @@ export default function CreateBookingForm() {
 
     await createAxiosRequest({
       method: 'POST',
-      url: '/bookings/',
+      url: '/bookings',
       data: form,
-    }).catch((err) => {
-      console.log(err.message)
     })
+      .then((response) => {
+        // If the response is true we will send a success message to the user
+        console.log('response', response)
 
-    router.push('/')
+        if (response?.status === 201) {
+          createDialog(
+            'Success!',
+            'Your booking has been added',
+            'success',
+            3000
+          )
+        }
+
+        setTimeout(() => router.push('/'), 3000)
+      })
+      .catch((err) => {
+        createDialog('Oops!', err, 'error', 3000)
+      })
   }
 
   useEffect(() => {

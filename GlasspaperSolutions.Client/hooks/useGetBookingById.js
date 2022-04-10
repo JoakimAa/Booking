@@ -13,8 +13,8 @@ export default function useGetBookingById(
 
   const getBookingById = useCallback(async () => {
     try {
-      console.log('Booking:', booking)
-
+      /*       console.log('Booking:', booking)
+       */
       const response = await createAxiosRequest({
         method: 'GET',
         url: `/bookings/${booking.bookingId}`,
