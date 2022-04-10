@@ -2,12 +2,11 @@ import 'react-datetime/css/react-datetime.css'
 import 'moment/locale/nb'
 import React, { useState } from 'react'
 
-import axios from 'axios'
 import moment from 'moment'
 import DateTime from 'react-datetime'
 import Modal from 'react-modal'
 
-import { HOST } from '@/lib/constants/constants'
+import CreateAxiosRequest from '@/lib/utils/createAxiosRequest'
 
 Modal.setAppElement('#grid')
 
@@ -53,7 +52,14 @@ export default function BookModal({
       endTime: moment(datesForm?.endTime, 'YYYY-MM-DDT HH:mm:ss').format(),
     }
 
-    await axios.put(`${HOST.API_URL}/api/bookings/${booking.bookingId}`, form)
+    await CreateAxiosRequest({
+      method: 'PUT',
+      url: `/bookings/${booking?.bookingId}`,
+      data: form,
+    }).catch((err) => {
+      console.log(err.message)
+    })
+
     console.log('form', form)
     setIsOpen(false)
     setIsBookingUpdated(true)

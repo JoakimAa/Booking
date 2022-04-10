@@ -1,10 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import axios from 'axios'
-
-import { HOST } from '@/lib/constants/constants'
-
-// Got inspiration from this. Source: https://dev.to/omarmoataz/react-using-custom-hooks-to-reuse-stateful-logic-11a7
+import createAxiosRequest from '@/lib/utils/createAxiosRequest'
 
 export default function useGetBookingById(
   booking,
@@ -12,19 +8,24 @@ export default function useGetBookingById(
   setIsBookingUpdated
 ) {
   const [updatedBooking, setBooking] = useState(booking)
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const getBookingById = useCallback(async () => {
     try {
       console.log('Booking:', booking)
 
-      const response = await axios.get(
-        `${HOST.API_URL}/api/bookings/${booking.bookingId}`
-      )
+      const response = await createAxiosRequest({
+        method: 'GET',
+        url: `/bookings/${booking.bookingId}`,
+      })
 
       if (response?.status === 200) {
         setBooking(response.data)
+        setLoading(false)
       }
-    } catch (error) {
+    } catch (err) {
+      setError('There has been an error getting booking')
       console.log('There has been an error getting Booking')
     }
   }, [booking])
@@ -41,5 +42,5 @@ export default function useGetBookingById(
     }
   }, [getBookingById, isBookingUpdated, setIsBookingUpdated])
 
-  return [updatedBooking]
+  return [updatedBooking, loading, error]
 }

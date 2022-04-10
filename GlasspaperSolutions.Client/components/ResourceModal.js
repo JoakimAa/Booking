@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
 
-import axios from 'axios'
 import { useRouter } from 'next/router'
 import Modal from 'react-modal'
 
-import { HOST } from '@/lib/constants/constants'
+import CreateAxiosRequest from '@/lib/utils/createAxiosRequest'
 
 Modal.setAppElement('#grid')
 
@@ -23,7 +22,15 @@ export default function ResourceModal({ isOpen, setIsOpen }) {
 
   const onSubmit = async () => {
     // event.preventDefault()
-    await axios.post(`${HOST.API_URL}/api/resources`, resourceForm)
+
+    await CreateAxiosRequest({
+      method: 'POST',
+      url: '/resources',
+      data: resourceForm,
+    }).catch((err) => {
+      console.log(err.message)
+    })
+
     console.log('form', resourceForm)
     setIsOpen(false)
     router.push('/booking/create')

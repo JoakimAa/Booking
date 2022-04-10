@@ -1,27 +1,25 @@
 import { useCallback, useEffect, useState } from 'react'
 
-import axios from 'axios'
-
-import { HOST } from '@/lib/constants/constants'
+import createAxiosRequest from '@/lib/utils/createAxiosRequest'
 
 export default function useGetResourceById(resourceId) {
   const [resource, setResource] = useState()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const getResource = useCallback(async () => {
     try {
-      const response = await axios.get(
-        `${HOST.API_URL}/api/resources/${resourceId}`
-      )
+      const response = await createAxiosRequest({
+        method: 'GET',
+        url: `/resources/${resourceId}`,
+      })
 
       if (response?.status === 200) {
-        /* console.log(response.data) */
-
         setResource(response.data)
+        setLoading(false)
       }
-    } catch (error) {
-      /*  setErrorMessage(
-            `There has been an error getting resource: ${error.response.status}`
-            ) */
+    } catch (err) {
+      setError('There has been an error getting resource')
       console.log('There has been an error getting resource')
     }
   }, [resourceId])
@@ -30,5 +28,5 @@ export default function useGetResourceById(resourceId) {
     getResource()
   }, [getResource])
 
-  return [resource]
+  return [resource, loading, error]
 }

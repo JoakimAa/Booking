@@ -1,11 +1,10 @@
 import { useState, useEffect } from 'react'
 
-import axios from 'axios'
 import { useRouter } from 'next/router'
 
 import ResourceModal from '@/components/ResourceModal'
 import SelectResources from '@/components/SelectResources'
-import { HOST } from '@/lib/constants/constants'
+import createAxiosRequest from '@/lib/utils/createAxiosRequest'
 
 export default function CreateBookingForm() {
   const [isOpen, setIsOpen] = useState(false)
@@ -29,9 +28,15 @@ export default function CreateBookingForm() {
 
   const handleSubmit = async (event) => {
     event.preventDefault()
-    await axios.post(`${HOST.API_URL}/api/bookings`, form).catch((err) => {
+
+    await createAxiosRequest({
+      method: 'POST',
+      url: '/bookings/',
+      data: form,
+    }).catch((err) => {
       console.log(err.message)
     })
+
     router.push('/')
   }
 

@@ -8,7 +8,10 @@ import useGetBookings from '@/hooks/useGetBookings'
 export default function Bookings() {
   const [isBookingDeleted, setIsBookingDeleted] = useState(false)
 
-  const [bookings] = useGetBookings(isBookingDeleted, setIsBookingDeleted)
+  const [bookings, loading, error] = useGetBookings(
+    isBookingDeleted,
+    setIsBookingDeleted
+  )
 
   return (
     <>
@@ -17,13 +20,15 @@ export default function Bookings() {
       </Head>
       <h1>Bookings</h1>
       <div id="bookingFlex">
-        {bookings?.map((booking, index) => (
-          <Booking
-            key={index}
-            booking={booking}
-            setIsBookingDeleted={setIsBookingDeleted}
-          />
-        ))}
+        {!loading &&
+          bookings?.map((booking, index) => (
+            <Booking
+              key={index}
+              booking={booking}
+              setIsBookingDeleted={setIsBookingDeleted}
+            />
+          ))}
+        <p>{error}</p>
       </div>
     </>
   )

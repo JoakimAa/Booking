@@ -1,5 +1,3 @@
-import faker from 'faker'
-
-export const HOST = {
-  API_URL:`https://localhost:7027`
+export const HEADER_CONFIG = {
+  ApiKey: process.env.NEXT_PUBLIC_API_KEY,
 }

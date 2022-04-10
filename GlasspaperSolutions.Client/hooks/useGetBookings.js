@@ -1,24 +1,30 @@
 import { useEffect, useState } from 'react'
 
-import axios from 'axios'
+/* import axios from 'axios'
 
-import { HOST } from '@/lib/constants/constants'
+import { HEADER_CONFIG } from '@/lib/constants/constants' */
+import createAxiosRequest from '@/lib/utils/createAxiosRequest'
 
 export default function useGetBookings(isBookingDeleted, setIsBookingDeleted) {
   const [bookings, setBookings] = useState()
+  const [error, setError] = useState('')
+  const [loading, setLoading] = useState(true)
 
   const getBookings = async () => {
     try {
-      const response = await axios.get(`${HOST.API_URL}/api/bookings`)
+      const response = await createAxiosRequest({
+        method: 'GET',
+        url: '/bookings',
+      })
 
       if (response?.status === 200) {
         setBookings(response.data)
+        setLoading(false)
       }
-    } catch (error) {
-      /*  setErrorMessage(
-            `There has been an error getting bookings: ${error.response.status}`
-            ) */
+    } catch (err) {
+      setError('There has been an error getting bookings')
       console.log('There has been an error getting bookings')
+      console.log('err', err.message)
     }
   }
 
@@ -31,5 +37,5 @@ export default function useGetBookings(isBookingDeleted, setIsBookingDeleted) {
     setIsBookingDeleted(false)
   }, [isBookingDeleted, setIsBookingDeleted])
 
-  return [bookings]
+  return [bookings, loading, error]
 }
