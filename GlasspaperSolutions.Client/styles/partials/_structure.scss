@@ -1,0 +1,55 @@
+@use "./colors.scss" as c;
+
+html {
+    font-size: 100%;
+  }
+  
+#grid {
+    display: grid;
+    grid-template-areas:    "header"
+                            "main";
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+}
+
+main {
+    margin: auto;
+    max-width: 1500px;
+    text-align: center;
+    justify-content: center;
+}
+
+main h1 { 
+    text-align: center;
+}
+
+#search {
+   /*  label {
+        margin: 0 0.5em 0 1em;
+    } */
+
+    > * {
+        margin: 0.2em 0.25em 1em;
+    }
+    
+}
+
+.nav {  
+    display: flex;
+    justify-content: center;
+    flex-direction: row;  
+    a {
+        padding: 1rem 2rem;
+        margin: 0 10em;
+        &:hover { 
+            color: c.$navButtons;
+        }
+    }
+}
+
+#header {
+    width: 100%;
+    box-shadow: 0px 14px 12px -6px rgba(0,0,0,0.43);  
+    grid-area: header;
+    margin: 0.2rem;
+}
