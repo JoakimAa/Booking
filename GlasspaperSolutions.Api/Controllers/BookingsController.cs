@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlasspaperSolutions.DataAccess;
 using GlasspaperSolutions.Model;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GlasspaperSolutions.Api.Controllers
 {
@@ -15,21 +16,58 @@ namespace GlasspaperSolutions.Api.Controllers
     [ApiController]
     public class BookingsController : ControllerBase
     {
+        private readonly IMemoryCache memoryCache;
         private readonly BookingContext _context;
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
-        public BookingsController(BookingContext context)
+        public BookingsController(IMemoryCache memoryCache, BookingContext context)
         {
+            this.memoryCache = memoryCache;
             _context = context;
         }
 
         // GET: api/Bookings
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        public async Task<IActionResult> GetAll()
         {
-            return await _context.Bookings
-                .Include(r => r.Resources)
-                .ToListAsync();
+            var cacheKey = "bookingList";
+
+            if (!memoryCache.TryGetValue(cacheKey, out List<Booking> bookingList))
+            {
+
+                try
+                {
+                    await semaphore.WaitAsync();
+
+                    bookingList = await _context.Bookings
+                        .Include(r => r.Resources)
+                         .ThenInclude(a => a.Resource)
+                        .ToListAsync();;
+                    var cacheExpiryOptions = new MemoryCacheEntryOptions 
+                    {
+                        AbsoluteExpiration = DateTime.Now.AddMinutes(5),
+                        Priority = CacheItemPriority.High,
+                        SlidingExpiration = TimeSpan.FromMinutes(2)
+                    };
+
+                    memoryCache.Set(cacheKey, bookingList, cacheExpiryOptions);
+
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }
+            return Ok(bookingList);
         }
+
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        //{
+        //    return await _context.Bookings
+        //        .Include(r => r.Resources).ThenInclude(a => a.Resource)
+        //        .ToListAsync();
+        //}
 
         // GET: api/Bookings/5
         [HttpGet("{id}")]
@@ -60,6 +98,8 @@ namespace GlasspaperSolutions.Api.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                memoryCache.Remove("bookingList");
+
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -83,6 +123,8 @@ namespace GlasspaperSolutions.Api.Controllers
         {
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
+            memoryCache.Remove("bookingList");
+
 
             return CreatedAtAction("GetBooking", new { id = booking.BookingId }, booking);
         }
@@ -99,7 +141,7 @@ namespace GlasspaperSolutions.Api.Controllers
 
             _context.Bookings.Remove(booking);
             await _context.SaveChangesAsync();
-
+            memoryCache.Remove("bookingList");
             return Ok(booking);
         }
 

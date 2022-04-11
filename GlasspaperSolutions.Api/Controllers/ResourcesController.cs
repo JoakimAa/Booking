@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using GlasspaperSolutions.DataAccess;
 using GlasspaperSolutions.Model;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace GlasspaperSolutions.Api.Controllers
 {
@@ -16,18 +17,56 @@ namespace GlasspaperSolutions.Api.Controllers
     public class ResourcesController : ControllerBase
     {
         private readonly BookingContext _context;
+        private readonly IMemoryCache memoryCache;
+        private static readonly SemaphoreSlim semaphore = new SemaphoreSlim(1, 1);
 
-        public ResourcesController(BookingContext context)
+
+
+        public ResourcesController(IMemoryCache memoryCache, BookingContext context)
         {
+            this.memoryCache = memoryCache;
             _context = context;
         }
 
         // GET: api/Resources
+
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Resource>>> GetResources()
         {
-            return await _context.Resources.ToListAsync();
+            var cacheKey = "resorceList";
+
+            if (!memoryCache.TryGetValue(cacheKey, out List<Resource> resorceList))
+            {
+
+                try
+                {
+                    await semaphore.WaitAsync();
+
+                    resorceList = await _context.Resources.ToListAsync();
+                    var cacheExpiryOptions = new MemoryCacheEntryOptions
+                    {
+                        AbsoluteExpiration = DateTime.Now.AddMinutes(5),
+                        Priority = CacheItemPriority.High,
+                        SlidingExpiration = TimeSpan.FromMinutes(2)
+                    };
+
+                    memoryCache.Set(cacheKey, resorceList, cacheExpiryOptions);
+
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            }
+            return Ok(resorceList);
         }
+
+        //[HttpGet]
+        //public async Task<ActionResult<IEnumerable<Resource>>> GetResources()
+        //{
+        //    return await _context.Resources.ToListAsync();
+        //}
 
         // GET: api/Resources/5
         [HttpGet("{id}")]
@@ -58,6 +97,7 @@ namespace GlasspaperSolutions.Api.Controllers
             try
             {
                 await _context.SaveChangesAsync();
+                memoryCache.Remove("resorceList");
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -71,7 +111,7 @@ namespace GlasspaperSolutions.Api.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(resource);
         }
 
         // POST: api/Resources
@@ -81,6 +121,7 @@ namespace GlasspaperSolutions.Api.Controllers
         {
             _context.Resources.Add(resource);
             await _context.SaveChangesAsync();
+            memoryCache.Remove("resorceList");
 
             return CreatedAtAction("GetResource", new { id = resource.ResourceId }, resource);
         }
@@ -97,8 +138,9 @@ namespace GlasspaperSolutions.Api.Controllers
 
             _context.Resources.Remove(resource);
             await _context.SaveChangesAsync();
+            memoryCache.Remove("resorceList");
 
-            return NoContent();
+            return Ok(resource);
         }
 
         private bool ResourceExists(int id)
@@ -107,3 +149,4 @@ namespace GlasspaperSolutions.Api.Controllers
         }
     }
 }
+
