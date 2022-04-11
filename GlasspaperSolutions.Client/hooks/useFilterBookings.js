@@ -15,6 +15,19 @@ export default function useFilterBookings(
   useEffect(() => {
     setFilteredBookings([])
 
+    // if (filterParameter === 'category') {
+    //   bookings?.map((booking) => console.log(booking?.resources))
+    //   bookings
+    //     ?.filter((booking) =>
+    //       booking?.resources?.filter((resource) =>
+    //         resource?.[filterParameter]
+    //           ?.toLowerCase()
+    //           .includes(filterParameterValue?.toLowerCase())
+    //       )
+    //     )
+    //     .map((filteredBooking) => addToFilteredBookings(filteredBooking))
+    // }
+
     if (!filterParameter) {
       setFilteredBookings(bookings)
     } /* if (filterParameter)  */ else {

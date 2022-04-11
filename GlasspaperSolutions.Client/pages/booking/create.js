@@ -79,6 +79,8 @@ export default function CreateBookingForm() {
             onChange={handleInputOnChange}
             value={form.name}
             required={true}
+            minLength={2}
+            maxLength="40"
           />
         </div>
         <div>
@@ -90,6 +92,8 @@ export default function CreateBookingForm() {
             required={true}
             onChange={handleInputOnChange}
             value={form.type}
+            minLength={2}
+            maxLength="20"
           />
         </div>
         <div>
@@ -101,6 +105,8 @@ export default function CreateBookingForm() {
             required={true}
             onChange={handleInputOnChange}
             value={form.owner}
+            minLength={2}
+            maxLength="20"
           />
         </div>
         <div>

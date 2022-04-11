@@ -14,7 +14,6 @@
   margin: auto;
 
   button {
-      background-color: #4CAF50; /* Green */
       border: none;
       color: white;
       padding: 10px 20px;
@@ -28,6 +27,14 @@
           cursor: pointer;
       }
   }
+}
+
+.btnDisabled {
+  background-color: rgb(255, 0, 0); /* Green */
+}
+
+.btnEnabled {
+  background-color: #4CAF50; /* Green */
 }
 
 #booking-modal {

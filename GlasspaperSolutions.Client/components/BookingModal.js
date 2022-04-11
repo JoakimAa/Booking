@@ -1,6 +1,6 @@
 import 'react-datetime/css/react-datetime.css'
 import 'moment/locale/nb'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import moment from 'moment'
 import DateTime from 'react-datetime'
@@ -17,6 +17,8 @@ export default function BookModal({
   booking,
   setIsBookingUpdated,
 }) {
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true)
+
   const [datesForm, setDatesForm] = useState({
     startTime: /* booking.startTime ??  */ '',
     endTime: /* booking.endTime ?? */ '',
@@ -43,6 +45,16 @@ export default function BookModal({
   const handleInputOnChange = ({ currentTarget: { name, value } }) => {
     setBookingForm((state) => ({ ...state, [name]: value }))
   }
+
+  useEffect(() => {
+    if (
+      datesForm.startTime !== '' &&
+      datesForm.endTime.owner !== '' &&
+      bookingForm.lender !== ''
+    )
+      setIsButtonDisabled(false)
+    else setIsButtonDisabled(true)
+  }, [datesForm, bookingForm])
 
   const onSubmit = async (/* event */) => {
     // event.preventDefault()
@@ -125,8 +137,16 @@ export default function BookModal({
           onChange={handleInputOnChange}
           value={bookingForm?.lender}
           required={true}
+          minLength={2}
+          maxLength="20"
         />
-        <button type="submit">Book</button>
+        <button
+          disabled={isButtonDisabled}
+          className={isButtonDisabled ? 'btnDisabled' : 'btnEnabled'}
+          type="submit"
+        >
+          Book
+        </button>
       </form>
     </Modal>
   )

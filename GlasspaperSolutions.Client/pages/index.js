@@ -15,6 +15,7 @@ export default function Bookings() {
 
   const handleInputOnChange = ({ currentTarget: { value } }) => {
     setFilterParameter(value)
+
     console.log(filterParameter)
   }
 
@@ -49,7 +50,7 @@ export default function Bookings() {
         {filterParameters?.map((value) => (
           <option
             key={value.filterParameterValue}
-            name={value.filterParameterValue}
+            name={value.filterParameterType}
             value={value.filterParameterValue}
           >
             {value?.filterParameter}
