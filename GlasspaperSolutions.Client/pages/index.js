@@ -40,34 +40,38 @@ export default function Bookings() {
         <title>Booking</title>
       </Head>
       <h1>Bookings</h1>
-      <select
-        id="severityDropdown"
-        className="grey"
-        name="filterParameter"
-        onChange={handleInputOnChange}
-      >
-        <option value="">Filters</option>
-        {filterParameters?.map((value) => (
-          <option
-            key={value.filterParameterValue}
-            name={value.filterParameterType}
-            value={value.filterParameterValue}
-          >
-            {value?.filterParameter}
-          </option>
-        ))}
-      </select>
-      <label htmlFor="filterParameterValue">Filer value</label>
-      <input
-        className="formSpacer"
-        type="text"
-        name="filterParameterValue"
-        id="filterParameterValue"
-        placeholder="Placeholder for name"
-        onChange={handleInputOnChangeValue}
-        value={filterParameterValue?.name}
-        required={true}
-      />
+      <div id="search">
+        <select
+          id="severityDropdown"
+          className="grey"
+          name="filterParameter"
+          onChange={handleInputOnChange}
+        >
+          <option value="">Filters</option>
+          {filterParameters?.map((value) => (
+            <option
+              key={value.filterParameterValue}
+              name={value.filterParameterType}
+              value={value.filterParameterValue}
+            >
+              {value?.filterParameter}
+            </option>
+          ))}
+        </select>
+        <label hidden htmlFor="filterParameterValue">
+          Search
+        </label>
+        <input
+          className="formSpacer"
+          type="text"
+          name="filterParameterValue"
+          id="filterParameterValue"
+          placeholder="Search"
+          onChange={handleInputOnChangeValue}
+          value={filterParameterValue?.name}
+          required={true}
+        />
+      </div>
       <div id="bookingFlex">
         {!loading &&
           filteredBookings?.map((booking, index) => (

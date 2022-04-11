@@ -48,7 +48,7 @@ export default function Booking({ booking, setIsBookingDeleted }) {
           )
         }
 
-        setTimeout(() => setIsBookingDeleted(true), 2000)
+        setTimeout(() => setIsBookingDeleted(true), 1500)
       })
       .catch((err) => {
         createDialog('Oops!', err, 'error', 3000)
@@ -73,7 +73,7 @@ export default function Booking({ booking, setIsBookingDeleted }) {
           )
         }
 
-        setTimeout(() => setIsBookingDeleted(true), 2000)
+        setTimeout(() => setIsBookingDeleted(true), 1500)
       })
       .catch((err) => {
         console.log(err.message)
